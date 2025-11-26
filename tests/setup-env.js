@@ -1,0 +1,3 @@
+// 设置测试环境变量
+process.env.VITE_SUPABASE_URL = 'https://lsffqvdzwnvtrmweqkwu.supabase.co'
+process.env.VITE_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZmZxdmR6d252dHJtd2Vxa3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MDg4OTksImV4cCI6MjA3NzE4NDg5OX0.Q1FIHwidSIBtTft-tmpIHe_hWXxx_ll1EX4tubud8Ts'
