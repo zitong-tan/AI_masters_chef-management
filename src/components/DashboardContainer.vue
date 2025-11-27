@@ -195,8 +195,13 @@ export default {
     console.log('DashboardContainer mounted');
     // 使用$nextTick确保所有子组件都已挂载
     this.$nextTick(() => {
-      // 初始加载数据
-      this.loadAllData();
+      // 再次使用$nextTick确保refs完全准备好
+      this.$nextTick(() => {
+        console.log('Double nextTick - refs should be ready now');
+        console.log('Available refs:', Object.keys(this.$refs));
+        // 初始加载数据
+        this.loadAllData();
+      });
     });
 
     // 设置自动刷新（可选）
@@ -328,10 +333,19 @@ export default {
      */
     async loadUserRanking() {
       try {
-        if (this.$refs.userRanking && this.$refs.userRanking.loadRankingData) {
-          await this.$refs.userRanking.loadRankingData();
+        console.log('loadUserRanking called, ref exists:', !!this.$refs.userRanking);
+        if (this.$refs.userRanking) {
+          console.log('userRanking ref found, has loadRankingData:', typeof this.$refs.userRanking.loadRankingData);
+          if (this.$refs.userRanking.loadRankingData) {
+            console.log('Calling userRanking.loadRankingData()');
+            await this.$refs.userRanking.loadRankingData();
+            console.log('userRanking.loadRankingData() completed');
+          } else {
+            console.warn('loadRankingData method not found on userRanking ref');
+          }
         } else {
-          console.warn('UserRankingList ref not available or loadRankingData method not found');
+          console.warn('UserRankingList ref not available');
+          console.log('Available refs:', Object.keys(this.$refs));
         }
       } catch (err) {
         console.error('Failed to load user ranking:', err);

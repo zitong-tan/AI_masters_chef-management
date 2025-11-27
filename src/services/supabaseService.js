@@ -291,7 +291,7 @@ export const getDifficultyDistribution = withErrorHandling(async () => {
 export const getRecentComments = withErrorHandling(async (limit = 20) => {
   const { data, error } = await supabase
     .from('user_comments')
-    .select('id, user_name, content, created_at')
+    .select('id, user_name, comment_text, created_at')
     .order('created_at', { ascending: false })
     .limit(limit)
   
@@ -301,11 +301,56 @@ export const getRecentComments = withErrorHandling(async (limit = 20) => {
   const result = data?.map(comment => ({
     id: comment.id,
     userName: comment.user_name,
-    content: comment.content,
-    createdAt: comment.created_at
+    content: comment.comment_text, // 数据库字段是comment_text
+    createdAt: comment.created_at,
+    flagged: false, // 数据库没有此字段，默认为false
+    flagReason: null // 数据库没有此字段，默认为null
   })) || []
 
   return result
+})
+
+/**
+ * 删除评论
+ * @param {number} commentId - 评论ID
+ * @returns {Promise<boolean>} 删除是否成功
+ */
+export const deleteComment = withErrorHandling(async (commentId) => {
+  const { error } = await supabase
+    .from('user_comments')
+    .delete()
+    .eq('id', commentId)
+  
+  if (error) throw error
+  
+  return true
+})
+
+/**
+ * 标记评论为不当内容
+ * 注意：当前数据库表不支持标记功能，此方法仅用于前端状态管理
+ * @param {number} commentId - 评论ID
+ * @param {string} reason - 标记原因
+ * @returns {Promise<boolean>} 标记是否成功
+ */
+export const flagComment = withErrorHandling(async (commentId, reason = '不当内容') => {
+  // 数据库表没有flagged字段，这里只返回成功
+  // 实际的标记状态将在前端内存中维护
+  console.warn(`数据库不支持标记功能，标记状态仅在前端维护 (commentId: ${commentId}, reason: ${reason})`);
+  return true
+})
+
+/**
+ * 取消标记评论
+ * 注意：当前数据库表不支持标记功能，此方法仅用于前端状态管理
+ * @param {number} commentId - 评论ID
+ * @returns {Promise<boolean>} 取消标记是否成功
+ */
+export const unflagComment = withErrorHandling(async (commentId) => {
+  // 数据库表没有flagged字段，这里只返回成功
+  // 实际的标记状态将在前端内存中维护
+  console.warn(`数据库不支持标记功能，标记状态仅在前端维护 (commentId: ${commentId})`);
+  return true
 })
 
 /**
