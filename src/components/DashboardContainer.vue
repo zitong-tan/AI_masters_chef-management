@@ -64,7 +64,7 @@
           <UserRankingList 
             ref="userRanking"
             :limit="10"
-            :autoLoad="false"
+            :autoLoad="true"
           />
         </section>
 
@@ -92,7 +92,7 @@
           <RecentCommentsList 
             ref="recentComments"
             :limit="20"
-            :autoLoad="false"
+            :autoLoad="true"
           />
         </section>
 
@@ -222,15 +222,14 @@ export default {
 
       try {
         // 并行加载所有数据，使用allSettled以便部分失败时仍能显示其他数据
+        // 注意：UserRankingList 和 RecentCommentsList 设置了 autoLoad="true"，会自动加载
         const results = await Promise.allSettled([
           this.loadStatistics(),
           this.loadCuisineDistribution(),
           this.loadDishTrend(),
           this.loadExpiringFoods(),
           this.loadCommentTimeline(),
-          this.loadDifficultyDistribution(),
-          this.loadUserRanking(),
-          this.loadRecentComments()
+          this.loadDifficultyDistribution()
         ]);
 
         console.log('loadAllData results:', results);
