@@ -10,7 +10,7 @@
         <component :is="currentComponent" :key="componentKey" />
       </main>
       <footer class="app-footer">
-        <p>&copy; 2024 AI美食大师. All rights reserved.</p>
+        <p>&copy; 2024 AI美食大师. tongtong and jiejie.</p>
       </footer>
     </div>
   </div>

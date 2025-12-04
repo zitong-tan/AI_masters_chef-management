@@ -40,8 +40,9 @@
         <div class="food-content">
           <div class="food-main-info">
             <h4 class="food-name">{{ food.food_name }}</h4>
-            <span class="food-quantity">{{ food.quantity }}{{ food.unit }}</span>
           </div>
+          
+          <div class="food-quantity">{{ food.quantity }}{{ food.unit }}</div>
           
           <div class="food-meta">
             <span class="food-user">👤 {{ food.user_name }}</span>
@@ -232,7 +233,6 @@ export default {
 
 .food-main-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 1rem;
 }
@@ -251,6 +251,7 @@ export default {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .food-meta {
