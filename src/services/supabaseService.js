@@ -1,4 +1,4 @@
-import supabase from './supabaseClient'
+                  import supabase from './supabaseClient'
 
 // 超时控制常量（10秒）
 const TIMEOUT_MS = 10000
@@ -389,6 +389,61 @@ export const exportAllData = withErrorHandling(async () => {
   }
 })
 
+/**
+ * 获取用户详情数据
+ * @param {string} userName - 用户名
+ * @param {number} currentRank - 当前排名
+ * @returns {Promise<Object>} 用户详情对象
+ */
+export const getUserDetail = withErrorHandling(async (userName, currentRank = null) => {
+  // 获取用户菜谱数据
+  const { data: dishesData, error: dishesError } = await supabase
+    .from('user_dishes')
+    .select('id, recipe_name, cuisine, difficulty, created_at')
+    .eq('user_name', userName)
+    .order('created_at', { ascending: false })
+  
+  if (dishesError) throw dishesError
+
+  // 获取用户评论数据
+  const { data: commentsData, error: commentsError } = await supabase
+    .from('user_comments')
+    .select('id, comment_text, created_at')
+    .eq('user_name', userName)
+    .order('created_at', { ascending: false })
+  
+  if (commentsError) throw commentsError
+
+  // 获取用户排行数据以计算活跃度
+  const rankingData = await getUserRanking(100) // 获取更多数据以确保找到该用户
+  const userRanking = rankingData.find(user => user.userName === userName)
+
+  // 转换数据格式
+  const dishes = dishesData?.map(dish => ({
+    id: dish.id,
+    name: dish.recipe_name,
+    cuisine: dish.cuisine || '未知',
+    difficulty: dish.difficulty || '未设置',
+    createdAt: dish.created_at
+  })) || []
+
+  const comments = commentsData?.map(comment => ({
+    id: comment.id,
+    content: comment.comment_text,
+    createdAt: comment.created_at
+  })) || []
+
+  return {
+    userName,
+    currentRank: currentRank || (userRanking ? rankingData.indexOf(userRanking) + 1 : null),
+    dishCount: dishes.length,
+    commentCount: comments.length,
+    activityScore: userRanking?.activityScore || (dishes.length + comments.length),
+    dishes,
+    comments
+  }
+})
+
 // 默认导出所有方法
 export default {
   getStatistics,
@@ -399,5 +454,6 @@ export default {
   getCommentTimeline,
   getDifficultyDistribution,
   getRecentComments,
-  exportAllData
+  exportAllData,
+  getUserDetail
 }

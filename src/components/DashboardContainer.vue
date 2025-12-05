@@ -65,6 +65,7 @@
             ref="userRanking"
             :limit="10"
             :autoLoad="true"
+            @user-click="handleUserClick"
           />
         </section>
 
@@ -107,6 +108,15 @@
     <footer v-if="lastUpdated && !loading" class="dashboard-footer">
       <p class="last-updated">最后更新: {{ formatLastUpdated(lastUpdated) }}</p>
     </footer>
+
+    <!-- 用户详情弹窗 -->
+    <UserDetailModal
+      v-if="showUserDetailModal"
+      :visible="showUserDetailModal"
+      :userDetail="currentUserDetail || {}"
+      :loading="loadingUserDetail"
+      @close="closeUserDetailModal"
+    />
   </div>
 </template>
 
@@ -122,6 +132,7 @@ import DifficultyDistributionChart from './DifficultyDistributionChart.vue';
 import DataExportButton from './DataExportButton.vue';
 import LoadingSpinner from './LoadingSpinner.vue';
 import ErrorMessage from './ErrorMessage.vue';
+import UserDetailModal from './UserDetailModal.vue';
 
 import {
   getStatistics,
@@ -129,7 +140,8 @@ import {
   getDishTrend,
   getExpiringFoods,
   getCommentTimeline,
-  getDifficultyDistribution
+  getDifficultyDistribution,
+  getUserDetail
 } from '../services/supabaseService';
 
 export default {
@@ -145,7 +157,8 @@ export default {
     DifficultyDistributionChart,
     DataExportButton,
     LoadingSpinner,
-    ErrorMessage
+    ErrorMessage,
+    UserDetailModal
   },
   data() {
     return {
@@ -173,7 +186,12 @@ export default {
 
       // 刷新间隔（5分钟）
       refreshInterval: null,
-      REFRESH_INTERVAL_MS: 5 * 60 * 1000
+      REFRESH_INTERVAL_MS: 5 * 60 * 1000,
+
+      // 用户详情弹窗状态
+      showUserDetailModal: false,
+      currentUserDetail: null,
+      loadingUserDetail: false
     };
   },
   computed: {
@@ -448,6 +466,46 @@ export default {
         clearInterval(this.refreshInterval);
         this.refreshInterval = null;
       }
+    },
+
+    /**
+     * 处理用户点击事件
+     */
+    async handleUserClick(user) {
+      // 先设置基本信息，避免null错误
+      this.currentUserDetail = {
+        userName: user.userName,
+        currentRank: user.rank,
+        dishCount: user.dishCount,
+        commentCount: user.commentCount,
+        activityScore: user.activityScore,
+        dishes: [],
+        comments: []
+      };
+      
+      this.showUserDetailModal = true;
+      this.loadingUserDetail = true;
+
+      try {
+        // 获取详细的用户数据
+        const userDetail = await getUserDetail(user.userName, user.rank);
+        this.currentUserDetail = userDetail;
+      } catch (error) {
+        console.error('Failed to load user detail:', error);
+        // 即使加载失败，也保留基本信息
+        this.$emit('error', '无法加载用户详细信息，请稍后重试');
+      } finally {
+        this.loadingUserDetail = false;
+      }
+    },
+
+    /**
+     * 关闭用户详情弹窗
+     */
+    closeUserDetailModal() {
+      this.showUserDetailModal = false;
+      this.currentUserDetail = null;
+      this.loadingUserDetail = false;
     }
   }
 };
