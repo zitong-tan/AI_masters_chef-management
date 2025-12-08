@@ -234,6 +234,7 @@
 
 <script>
 import supabase from '../services/supabaseClient';
+import themeManager from '../utils/themeManager';
 
 export default {
   name: 'SystemSettings',
@@ -264,6 +265,16 @@ export default {
   mounted() {
     this.loadSettings();
     this.loadSystemStats();
+    this.applyTheme();
+  },
+
+  watch: {
+    'settings.theme': {
+      handler() {
+        this.applyTheme();
+      },
+      immediate: true
+    }
   },
   methods: {
     loadSettings() {
@@ -275,10 +286,16 @@ export default {
 
     saveSettings() {
       localStorage.setItem('systemSettings', JSON.stringify(this.settings));
+      this.applyTheme(); // 保存时应用主题
       this.showSaveNotification = true;
       setTimeout(() => {
         this.showSaveNotification = false;
       }, 2000);
+    },
+
+    applyTheme() {
+      // 使用主题管理器应用主题
+      themeManager.applyTheme(this.settings.theme);
     },
 
     async loadSystemStats() {
@@ -369,6 +386,50 @@ export default {
 };
 </script>
 
+<style>
+/* 全局主题变量 */
+:root {
+  --theme-primary: #667eea;
+  --theme-secondary: #764ba2;
+  --theme-primary-dark: #1e3c72;
+  --theme-secondary-dark: #2a5298;
+  --theme-accent: #3498db;
+}
+
+/* 主题类 */
+.theme-blue {
+  --theme-primary: #667eea;
+  --theme-secondary: #764ba2;
+  --theme-primary-dark: #1e3c72;
+  --theme-secondary-dark: #2a5298;
+  --theme-accent: #3498db;
+}
+
+.theme-green {
+  --theme-primary: #2ecc71;
+  --theme-secondary: #27ae60;
+  --theme-primary-dark: #27ae60;
+  --theme-secondary-dark: #229954;
+  --theme-accent: #27ae60;
+}
+
+.theme-purple {
+  --theme-primary: #9b59b6;
+  --theme-secondary: #8e44ad;
+  --theme-primary-dark: #8e44ad;
+  --theme-secondary-dark: #7d3c98;
+  --theme-accent: #9b59b6;
+}
+
+.theme-orange {
+  --theme-primary: #f39c12;
+  --theme-secondary: #e67e22;
+  --theme-primary-dark: #e67e22;
+  --theme-secondary-dark: #d35400;
+  --theme-accent: #f39c12;
+}
+</style>
+
 <style scoped>
 .system-settings {
   padding: 2rem;
@@ -384,7 +445,7 @@ export default {
   margin: 0 0 0.5rem 0;
   font-size: 28px;
   font-weight: 700;
-  color: #1e3c72;
+  color: var(--theme-primary-dark);
 }
 
 .settings-subtitle {
@@ -410,7 +471,7 @@ export default {
   margin: 0 0 1.5rem 0;
   font-size: 18px;
   font-weight: 700;
-  color: #1e3c72;
+  color: var(--theme-primary-dark);
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 0.75rem;
 }
@@ -455,7 +516,7 @@ export default {
 
 .setting-control:focus {
   outline: none;
-  border-color: #2a5298;
+  border-color: var(--theme-secondary-dark);
 }
 
 /* 切换开关 */
@@ -497,7 +558,7 @@ export default {
 }
 
 input:checked + .toggle-slider {
-  background-color: #2a5298;
+  background-color: var(--theme-secondary-dark);
 }
 
 input:checked + .toggle-slider:before {
@@ -528,7 +589,7 @@ input:checked + .toggle-slider:before {
 .info-value {
   font-size: 18px;
   font-weight: 700;
-  color: #1e3c72;
+  color: var(--theme-primary-dark);
 }
 
 .status-online {
@@ -553,13 +614,13 @@ input:checked + .toggle-slider:before {
 }
 
 .action-btn--primary {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-secondary-dark) 100%);
   color: white;
 }
 
 .action-btn--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
 }
 
 .action-btn--secondary {
@@ -598,14 +659,14 @@ input:checked + .toggle-slider:before {
 }
 
 .about-link {
-  color: #2a5298;
+  color: var(--theme-secondary-dark);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .about-link:hover {
-  color: #1e3c72;
+  color: var(--theme-primary-dark);
   text-decoration: underline;
 }
 

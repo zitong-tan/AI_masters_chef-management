@@ -542,7 +542,7 @@ export default {
   font-size: 28px;
   font-weight: 700;
   color: #333;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -565,7 +565,7 @@ export default {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #3498db;
+  background: var(--theme-accent, #3498db);
   color: white;
   border: none;
   border-radius: 8px;
@@ -576,7 +576,7 @@ export default {
 }
 
 .refresh-button:hover:not(:disabled) {
-  background: #2980b9;
+  background: var(--theme-primary-dark, #2980b9);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
 }

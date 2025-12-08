@@ -206,7 +206,7 @@ export default {
   align-items: flex-start;
   padding: 1.5rem;
   border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   color: white;
 }
 
@@ -330,8 +330,8 @@ export default {
 }
 
 .tab-button--active {
-  color: #3498db;
-  border-bottom-color: #3498db;
+  color: var(--theme-accent, #3498db);
+  border-bottom-color: var(--theme-accent, #3498db);
   background: white;
 }
 
@@ -371,7 +371,7 @@ export default {
   padding: 1rem;
   background: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid var(--theme-accent, #3498db);
 }
 
 .dish-info {
@@ -414,7 +414,7 @@ export default {
   padding: 1rem;
   background: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #27ae60;
+  border-left: 4px solid var(--theme-secondary, #27ae60);
 }
 
 .comment-content {

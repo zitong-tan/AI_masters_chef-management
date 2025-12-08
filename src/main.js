@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import './utils/themeManager' // 初始化主题管理器
 
 Vue.config.productionTip = false
 
